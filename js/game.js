@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 
 const BEST_KEY = "saguaro-hop-best";
 const CHUNK = 68;
@@ -35,8 +34,14 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0xe39a58, 0.0115);
 
 const camera = new THREE.PerspectiveCamera(78, innerWidth / innerHeight, 0.08, 620);
-const controls = new PointerLockControls(camera, document.body);
-scene.add(controls.object);
+const player = new THREE.Object3D();
+player.add(camera);
+scene.add(player);
+
+let yaw = 0;
+let pitch = 0;
+let dragging = false;
+const stickVec = { x: 0, y: 0 };
 
 const clock = new THREE.Clock();
 const keys = new Set();
@@ -549,7 +554,31 @@ AudioBus.prototype.startWind = function () {
 };
 
 function playerObj() {
-  return controls.object;
+  return player;
+}
+
+function setLook(nextYaw, nextPitch) {
+  yaw = nextYaw;
+  pitch = Math.max(-1.22, Math.min(1.22, nextPitch));
+  player.rotation.y = yaw;
+  camera.rotation.x = pitch;
+}
+
+function lookDelta(dx, dy) {
+  setLook(yaw - dx * 0.0025, pitch - dy * 0.0022);
+}
+
+function isPointerLocked() {
+  return document.pointerLockElement === renderer.domElement;
+}
+
+function tryPointerLock() {
+  if (!renderer.domElement.requestPointerLock) return;
+  try {
+    renderer.domElement.requestPointerLock();
+  } catch (err) {
+    /* drag-to-look still works */
+  }
 }
 
 function playerFeet() {
@@ -811,7 +840,7 @@ function resetWorld() {
   obj.rotation.set(0, 0, 0);
   spawn.set(0, EYE, 0);
   lastPos.copy(obj.position);
-  camera.rotation.set(0, 0, 0);
+  setLook(0, 0);
   camera.position.set(0, 0, 0);
   updateChunks();
   updateHud();
@@ -877,7 +906,8 @@ function hit(amount, reason) {
 
 function die() {
   state = "dead";
-  controls.unlock();
+  if (document.exitPointerLock) document.exitPointerLock();
+  document.getElementById("touch-ui").classList.add("hidden");
   const best = Math.max(Math.floor(score), Number(localStorage.getItem(BEST_KEY) || 0));
   localStorage.setItem(BEST_KEY, String(best));
   document.getElementById("dead-stats").textContent =
@@ -965,11 +995,15 @@ function updatePlayer(dt) {
   forward.normalize();
   const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
   const wish = new THREE.Vector3();
-  if (keys.has("w")) wish.add(forward);
-  if (keys.has("s")) wish.sub(forward);
+  if (keys.has("w") || keys.has("arrowup")) wish.add(forward);
+  if (keys.has("s") || keys.has("arrowdown")) wish.sub(forward);
   if (keys.has("d")) wish.add(right);
   if (keys.has("a")) wish.sub(right);
-  const moving = wish.lengthSq() > 0;
+  wish.addScaledVector(forward, stickVec.y);
+  wish.addScaledVector(right, stickVec.x);
+  if (keys.has("arrowleft") || keys.has("q")) lookDelta(-420 * dt, 0);
+  if (keys.has("arrowright") || keys.has("e")) lookDelta(420 * dt, 0);
+  const moving = wish.lengthSq() > 0.0001;
   if (moving) {
     wish.normalize().multiplyScalar(speed * dt);
     obj.position.add(wish);
@@ -1029,7 +1063,9 @@ function updatePlayer(dt) {
 
   bob += (moving && onGround ? 1 : 0) * dt * speed * 1.4;
   const b = moving && onGround ? Math.sin(bob * 2.2) * 0.045 : 0;
-  camera.position.y = b;
+  const sx = shake > 0 ? (Math.random() - 0.5) * shake * 0.35 : 0;
+  const sz = shake > 0 ? (Math.random() - 0.5) * shake * 0.35 : 0;
+  camera.position.set(sx, b, sz);
   camera.fov += ((chili > 0 ? 88 : 78) - camera.fov) * Math.min(1, dt * 6);
   camera.updateProjectionMatrix();
 
@@ -1144,14 +1180,7 @@ function applyCameraExtras(dt) {
     g.position.z = p.z;
     sandTex.offset.set(p.x / (2400 / 90), p.z / (2400 / 90));
   }
-  if (shake > 0) {
-    shake = Math.max(0, shake - dt * 1.8);
-    camera.position.x = (Math.random() - 0.5) * shake * 0.35;
-    camera.position.z = (Math.random() - 0.5) * shake * 0.35;
-  } else {
-    camera.position.x = 0;
-    camera.position.z = 0;
-  }
+  if (shake > 0) shake = Math.max(0, shake - dt * 1.8);
 }
 
 function beginPlay() {
@@ -1165,19 +1194,22 @@ function beginPlay() {
   hud.classList.remove("hidden");
   hatBrim.classList.remove("hidden");
   crosshair.classList.remove("hidden");
-  controls.lock();
+  document.getElementById("touch-ui").classList.remove("hidden");
+  renderer.domElement.style.cursor = "grab";
+  tryPointerLock();
   audio.beep(330, 0.1, "square", 0.08, 500);
+  showToast("DRAG or grab mouse to look · WASD or stick to mosey");
 }
 
 function togglePause() {
   if (state === "play") {
     state = "pause";
-    controls.unlock();
+    if (document.exitPointerLock) document.exitPointerLock();
     pauseEl.classList.remove("hidden");
   } else if (state === "pause") {
     state = "play";
     pauseEl.classList.add("hidden");
-    controls.lock();
+    tryPointerLock();
     clock.getDelta();
   }
 }
@@ -1234,9 +1266,11 @@ function keyOf(e) {
 window.addEventListener("resize", onResize);
 window.addEventListener("keydown", (e) => {
   const k = keyOf(e);
-  if (["w", "a", "s", "d", " ", "shift"].includes(e.key.toLowerCase()) || e.code === "Space") e.preventDefault();
+  if (["w", "a", "s", "d", " ", "shift", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k) || e.code === "Space") {
+    e.preventDefault();
+  }
   keys.add(k);
-  if (k === " ") tryJump();
+  if (k === " " || k === "space") tryJump();
   if (k === "p") togglePause();
   if (k === "m") {
     muted = !muted;
@@ -1246,15 +1280,82 @@ window.addEventListener("keydown", (e) => {
 });
 window.addEventListener("keyup", (e) => keys.delete(keyOf(e)));
 
-controls.addEventListener("unlock", () => {
-  if (state === "play") togglePause();
-});
-controls.addEventListener("lock", () => {
-  if (state === "pause") {
-    state = "play";
-    pauseEl.classList.add("hidden");
+renderer.domElement.addEventListener("pointerdown", (e) => {
+  if (state !== "play") return;
+  if (e.button !== 0) return;
+  dragging = true;
+  renderer.domElement.style.cursor = "grabbing";
+  try {
+    renderer.domElement.setPointerCapture(e.pointerId);
+  } catch (err) {
+    /* ignore */
   }
+  tryPointerLock();
 });
+window.addEventListener("pointerup", () => {
+  dragging = false;
+  if (state === "play" && !isPointerLocked()) renderer.domElement.style.cursor = "grab";
+});
+window.addEventListener("pointermove", (e) => {
+  if (state !== "play") return;
+  if (isPointerLocked() || dragging) lookDelta(e.movementX, e.movementY);
+});
+document.addEventListener("pointerlockchange", () => {
+  if (state === "play") renderer.domElement.style.cursor = isPointerLocked() ? "none" : "grab";
+});
+
+function bindStick() {
+  const el = document.getElementById("stick");
+  const knob = document.getElementById("stick-knob");
+  let active = false;
+  const setFrom = (x, y) => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    let dx = (x - cx) / (r.width * 0.5);
+    let dy = (y - cy) / (r.height * 0.5);
+    const mag = Math.hypot(dx, dy);
+    if (mag > 1) {
+      dx /= mag;
+      dy /= mag;
+    }
+    stickVec.x = dx;
+    stickVec.y = -dy;
+    knob.style.transform = `translate(${dx * 28}px, ${dy * 28}px)`;
+  };
+  const end = () => {
+    active = false;
+    stickVec.x = 0;
+    stickVec.y = 0;
+    knob.style.transform = "translate(0, 0)";
+  };
+  el.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    active = true;
+    el.setPointerCapture(e.pointerId);
+    setFrom(e.clientX, e.clientY);
+  });
+  el.addEventListener("pointermove", (e) => {
+    if (!active) return;
+    setFrom(e.clientX, e.clientY);
+  });
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+}
+
+document.getElementById("jump-btn").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  tryJump();
+});
+document.getElementById("sprint-btn").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  keys.add("shift");
+});
+document.getElementById("sprint-btn").addEventListener("pointerup", () => keys.delete("shift"));
+document.getElementById("sprint-btn").addEventListener("pointerleave", () => keys.delete("shift"));
 
 startBtn.addEventListener("click", () => beginPlay());
 againBtn.addEventListener("click", () => beginPlay());
@@ -1270,6 +1371,7 @@ addGround();
 addMountains();
 addVultures();
 createArms();
+bindStick();
 updateHud();
 spawnChunk(0, 0);
 playerObj().position.set(0, 8, 14);

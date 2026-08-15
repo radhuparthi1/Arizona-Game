@@ -68,6 +68,16 @@
       <div id="hat-brim" class="hidden"></div>
       <div id="floaters"></div>
 
+      <div id="touch-ui" class="hidden">
+        <div id="stick" aria-label="move">
+          <div id="stick-knob"></div>
+        </div>
+        <div class="touch-btns">
+          <button type="button" id="sprint-btn">BOOT IT</button>
+          <button type="button" id="jump-btn">JUMP</button>
+        </div>
+      </div>
+
       <div id="overlay" class="menu">
         <div class="poster">
           <p class="territory">TERRITORY OF ARIZONA · SONORAN DESERT</p>
@@ -79,15 +89,16 @@
             hop the tumbling weeds, snatch turquoise gold, and don't get rattlesnake bit.
           </p>
           <ul class="legend">
-            <li><b>WASD</b> mosey</li>
-            <li><b>MOUSE</b> look</li>
-            <li><b>SPACE</b> jump / double jump</li>
+            <li><b>WASD</b> or on-screen stick</li>
+            <li><b>DRAG</b> / mouse to look</li>
+            <li><b>SPACE</b> or JUMP</li>
             <li><b>SHIFT</b> sprint (drinks the canteen)</li>
+            <li><b>Q / E</b> or arrows to turn</li>
             <li><b>M</b> mute · <b>P</b> pause</li>
           </ul>
           <p class="best">Territory record: <span id="best">0</span></p>
           <button id="start-btn" type="button">DROP INTO THE DESERT</button>
-          <p class="fine">click once — mouse lock + desert audio</p>
+          <p class="fine">click play — drag to look, no mouse-lock required</p>
         </div>
       </div>
 
