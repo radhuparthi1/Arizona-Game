@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saguaro Hop — First-Person Arizona</title>
+    <meta
+      name="description"
+      content="First-person Arizona desert hopper. Jump tumbleweeds, grab turquoise gold, bounce barrel cactus."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%23c45c26' width='64' height='64' rx='12'/%3E%3Cpath fill='%232d6a32' d='M30 54V18c0-4 4-4 4 0v36h-4zm4-22h10c2 0 2 8 0 8H34v-8zm-4-6H20c-2 0-2 8 0 8h10v-8z'/%3E%3Ccircle cx='32' cy='14' r='3' fill='%23f4d19b'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="game-root">
+      <canvas id="c"></canvas>
+      <div id="vignette"></div>
+      <div id="heat"></div>
+      <div id="flash"></div>
+
+      <div id="hud" class="hidden">
+        <div class="hud-top">
+          <div class="wanted">
+            <span class="label">WANTED SCORE</span>
+            <span id="score">0</span>
+          </div>
+          <div class="hud-cluster">
+            <div class="stat">
+              <span class="label">COINS</span>
+              <span id="coins">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">MILES</span>
+              <span id="miles">0.00</span>
+            </div>
+            <div class="stat combo hidden" id="combo-wrap">
+              <span class="label">COMBO</span>
+              <span id="combo">x1</span>
+            </div>
+          </div>
+          <div class="hearts" id="hearts" aria-label="lives"></div>
+        </div>
+        <div class="hud-bottom">
+          <div class="canteen">
+            <span class="label">CANTEEN</span>
+            <div class="bar"><div id="water-bar"></div></div>
+          </div>
+          <div id="pickup-toast"></div>
+          <div class="hint" id="run-hint">SHIFT boots it · SPACE jumps twice · bounce the barrel cactus</div>
+        </div>
+      </div>
+
+      <div id="crosshair" class="hidden"></div>
+      <div id="hat-brim" class="hidden"></div>
+      <div id="floaters"></div>
+
+      <div id="touch-ui" class="hidden">
+        <div id="stick" aria-label="move">
+          <div id="stick-knob"></div>
+        </div>
+        <div class="touch-btns">
+          <button type="button" id="sprint-btn">BOOT IT</button>
+          <button type="button" id="jump-btn">JUMP</button>
+        </div>
+      </div>
+
+      <div id="overlay" class="menu">
+        <div class="poster">
+          <p class="territory">TERRITORY OF ARIZONA · SONORAN DESERT</p>
+          <h1>SAGUARO HOP</h1>
+          <p class="tag">first-person cactus cowboy</p>
+          <div class="badge">JUMPIN' · TUMBLIN' · GOLD GRABBIN'</div>
+          <p class="blurb">
+            You are a walking saguaro in cowboy country. Lock eyes with the sunset,
+            hop the tumbling weeds, snatch turquoise gold, and don't get rattlesnake bit.
+          </p>
+          <ul class="legend">
+            <li><b>WASD</b> or on-screen stick</li>
+            <li><b>DRAG</b> / mouse to look</li>
+            <li><b>SPACE</b> or JUMP</li>
+            <li><b>SHIFT</b> sprint (drinks the canteen)</li>
+            <li><b>Q / E</b> or arrows to turn</li>
+            <li><b>M</b> mute · <b>P</b> pause</li>
+          </ul>
+          <p class="best">Territory record: <span id="best">0</span></p>
+          <button id="start-btn" type="button">DROP INTO THE DESERT</button>
+          <p class="fine">click play — drag to look, no mouse-lock required</p>
+        </div>
+      </div>
+
+      <div id="pause" class="hidden panel">
+        <h2>HOLD UP, PARTNER</h2>
+        <p>Paused in the wash. Click or press P to keep hoppin'.</p>
+      </div>
+
+      <div id="dead" class="hidden panel">
+        <h2>FACE DOWN IN THE DUST</h2>
+        <p id="dead-stats"></p>
+        <button id="again-btn" type="button">BACK IN THE SADDLE</button>
+      </div>
+    </div>
+    <script type="module" src="js/game.js"></script>
+  </body>
+</html>
