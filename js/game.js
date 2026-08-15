@@ -593,7 +593,10 @@ function spawnChunk(cx, cz) {
     const d = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 6), sandMat);
     const s = 3.2 + rng() * 6;
     d.scale.set(s, 0.22 + rng() * 0.18, s * (0.65 + rng() * 0.4));
-    d.position.set(originX + (rng() - 0.5) * CHUNK, -0.12, originZ + (rng() - 0.5) * CHUNK);
+    const dx = originX + (rng() - 0.5) * CHUNK;
+    const dz = originZ + (rng() - 0.5) * CHUNK;
+    if (Math.hypot(dx, dz) < 22) continue;
+    d.position.set(dx, -0.12, dz);
     d.receiveShadow = true;
     scene.add(d);
     objects.push(d);
@@ -664,8 +667,17 @@ function spawnChunk(cx, cz) {
     for (let i = 1; i <= 14; i++) {
       const coin = makeCoin(i === 10);
       const hover = i % 4 === 0 ? 2.15 : 1.05;
-      coin.position.set((i % 2 === 0 ? 0.9 : -0.9), hover, -2.4 - i * 2.1);
+      const xOff = i % 5 === 0 ? (i % 2 ? 1.15 : -1.15) : 0;
+      coin.position.set(xOff, hover, -2.2 - i * 2.15);
       coin.userData.baseY = hover;
+      scene.add(coin);
+      objects.push(coin);
+    }
+    for (let a = 0; a < 8; a++) {
+      const ang = (a / 8) * Math.PI * 2;
+      const coin = makeCoin(false);
+      coin.position.set(Math.cos(ang) * 5.2, 1.02, Math.sin(ang) * 5.2);
+      coin.userData.baseY = 1.02;
       scene.add(coin);
       objects.push(coin);
     }
@@ -679,13 +691,13 @@ function spawnChunk(cx, cz) {
     jug.userData.baseY = 0.75;
     scene.add(jug);
     objects.push(jug);
-    for (const wz of [-8, -24]) {
+    for (const wz of [-16, -30]) {
       const weed = makeTumbleweed();
-      weed.position.set(-6, 0.7, wz);
+      weed.position.set(-18, 0.7, wz);
       weed.scale.setScalar(1.4);
       scene.add(weed);
       objects.push(weed);
-      tumbleweeds.push({ mesh: weed, vx: 7.5, vz: 0.4, r: 0.75, spin: 1 });
+      tumbleweeds.push({ mesh: weed, vx: 8.5, vz: 0.2, r: 0.75, spin: 1 });
     }
   }
 
@@ -732,7 +744,7 @@ function spawnChunk(cx, cz) {
     objects.push(sign);
   }
 
-  const weeds = 2 + Math.floor(rng() * 3);
+  const weeds = isOrigin ? 0 : 2 + Math.floor(rng() * 3);
   for (let i = 0; i < weeds; i++) {
     const w = makeTumbleweed();
     const x = originX + (rng() - 0.5) * CHUNK;
@@ -788,7 +800,7 @@ function resetWorld() {
   velY = 0;
   onGround = true;
   jumpsLeft = 2;
-  invuln = 0;
+  invuln = 2.4;
   chili = 0;
   shake = 0;
   hintT = 8;
@@ -1078,10 +1090,15 @@ function updatePickups(dt) {
       const k = o.userData.kind;
       if (!k) continue;
       if (k === "coin" || k === "nugget" || k === "water" || k === "chili" || k === "life") {
-        const base = o.userData.baseY || 0.8;
-        o.position.y = base + Math.sin(t * 3 + o.position.x) * 0.12;
+        const dist = o.position.distanceTo(p);
+        if (dist < 3.4) {
+          o.position.lerp(p, 1 - Math.pow(0.08, dt));
+        } else {
+          const base = o.userData.baseY || 0.8;
+          o.position.y = base + Math.sin(t * 3 + o.position.x) * 0.12;
+        }
         o.rotation.y += dt * 2.4;
-        if (o.position.distanceTo(p) < 1.35) collect(o, ch.objects);
+        if (dist < 1.9) collect(o, ch.objects);
       } else if (k === "snake") {
         o.userData.dir += dt * 0.7;
         const home = o.userData.home;
