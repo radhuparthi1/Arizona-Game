@@ -655,6 +655,7 @@ function spawnChunk(cx, cz) {
     const coin = makeCoin(big);
     const x = originX + (rng() - 0.5) * (CHUNK - 4);
     const z = originZ + (rng() - 0.5) * (CHUNK - 4);
+    if (isOrigin && Math.hypot(x, z) < 10) continue;
     const hover = 0.85 + rng() * 1.4 + (rng() > 0.75 ? 1.4 : 0);
     coin.position.set(x, hover, z);
     coin.userData.baseY = hover;
