@@ -1,0 +1,130 @@
+:root {
+  --sand: #e9c46a;
+  --clay: #c45c26;
+  --copper: #b87333;
+  --turquoise: #2a9d8f;
+  --night: #12232e;
+  --cream: #fff6e5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(255, 210, 120, 0.45), transparent 60%),
+    linear-gradient(180deg, #1b3a4b 0%, #c45c26 42%, #7a3b1e 70%, #3d2314 100%);
+  color: var(--cream);
+  font-family: Nunito, "Segoe UI", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px 16px 24px;
+  gap: 10px;
+}
+
+.sunburst {
+  pointer-events: none;
+  position: fixed;
+  inset: -20%;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 30%,
+    rgba(255, 209, 102, 0.07) 0 8deg,
+    rgba(196, 92, 38, 0.05) 8deg 16deg
+  );
+  opacity: 0.7;
+}
+
+.masthead {
+  position: relative;
+  text-align: center;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.flag-line {
+  margin: 0;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #ffd166;
+}
+
+.masthead h1 {
+  display: none;
+}
+
+.stage {
+  position: relative;
+  width: min(1280px, 100%);
+  filter: drop-shadow(0 18px 40px rgba(20, 8, 0, 0.45));
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 4px solid #d4a054;
+  box-shadow:
+    0 0 0 3px #7a3b1e,
+    inset 0 0 0 2px rgba(42, 157, 143, 0.35);
+  background: #1b3a4b;
+  touch-action: none;
+  cursor: pointer;
+}
+
+#mute {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 2;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(18, 35, 46, 0.72);
+  color: var(--cream);
+  font: 700 12px Nunito, sans-serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+
+#mute:hover,
+#mute[aria-pressed="true"] {
+  background: rgba(42, 157, 143, 0.85);
+}
+
+.help {
+  position: relative;
+  margin: 0;
+  max-width: 900px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 246, 229, 0.88);
+}
+
+@media (max-width: 720px) {
+  body {
+    overflow: auto;
+  }
+
+  .help {
+    font-size: 12px;
+  }
+}
