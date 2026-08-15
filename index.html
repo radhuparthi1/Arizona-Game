@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#c45c26" />
+    <title>Saguaro Leap — Arizona Canyon Run</title>
+    <meta name="description" content="Jump a saguaro cactus across the Sonoran Desert, Sedona red rocks, and the Grand Canyon." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Paytone+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="sunburst" aria-hidden="true"></div>
+      <header class="masthead">
+        <p class="flag-line">Arizona · The Grand Canyon State</p>
+        <h1>Saguaro Leap</h1>
+      </header>
+      <div class="stage">
+        <canvas id="game" width="1280" height="720" aria-label="Saguaro Leap game"></canvas>
+        <button id="mute" type="button" aria-pressed="false" title="Toggle sound">♪ Sound on</button>
+      </div>
+      <p class="help">
+        <strong>Space / Click / Tap</strong> jump · <strong>double-tap in air</strong> for a second leap ·
+        <strong>P</strong> pause · collect turquoise, clear canyon gaps, and ride the rim
+      </p>
+    </div>
+    <script src="js/game.js"></script>
+  </body>
+</html>
