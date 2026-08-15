@@ -36,7 +36,7 @@ scene.fog = new THREE.FogExp2(0xe39a58, 0.0115);
 
 const camera = new THREE.PerspectiveCamera(78, innerWidth / innerHeight, 0.08, 620);
 const controls = new PointerLockControls(camera, document.body);
-scene.add(controls.getObject());
+scene.add(controls.object);
 
 const clock = new THREE.Clock();
 const keys = new Set();
@@ -323,11 +323,21 @@ function makeTumbleweed() {
 
 function makeCoin(big) {
   const g = new THREE.Group();
-  const rim = new THREE.Mesh(new THREE.CylinderGeometry(big ? 0.42 : 0.28, big ? 0.42 : 0.28, 0.07, 16), goldMat);
+  const rim = new THREE.Mesh(new THREE.CylinderGeometry(big ? 0.5 : 0.36, big ? 0.5 : 0.36, 0.08, 16), goldMat);
   rim.rotation.x = Math.PI / 2;
-  const gem = new THREE.Mesh(new THREE.CylinderGeometry(big ? 0.18 : 0.12, big ? 0.18 : 0.12, 0.08, 8), turqMat);
+  const gem = new THREE.Mesh(new THREE.CylinderGeometry(big ? 0.22 : 0.15, big ? 0.22 : 0.15, 0.09, 8), turqMat);
   gem.rotation.x = Math.PI / 2;
-  g.add(rim, gem);
+  const halo = new THREE.Mesh(
+    new THREE.CircleGeometry(big ? 0.7 : 0.52, 12),
+    new THREE.MeshBasicMaterial({
+      color: 0xffe08a,
+      transparent: true,
+      opacity: 0.22,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    })
+  );
+  g.add(rim, gem, halo);
   g.userData = { kind: big ? "nugget" : "coin", value: big ? 50 : 10 };
   return g;
 }
@@ -433,26 +443,23 @@ function createArms() {
   const dark = new THREE.MeshStandardMaterial({ color: 0x2a642c, roughness: 0.8, flatShading: true });
   function arm(side) {
     const a = new THREE.Group();
-    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.5, 6), mat);
-    upper.rotation.z = side * 1.05;
-    upper.position.set(side * 0.22, -0.22, -0.42);
-    const pad = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 5), dark);
-    pad.position.set(side * 0.42, -0.42, -0.5);
-    const claw = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), new THREE.MeshStandardMaterial({ color: 0xf0e0c0 }));
-    claw.position.set(side * 0.48, -0.5, -0.55);
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, 0.48, 6), mat);
+    upper.rotation.z = side * 0.95;
+    upper.position.set(side * 0.28, -0.18, -0.48);
+    const pad = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 5), dark);
+    pad.position.set(side * 0.5, -0.4, -0.58);
+    const claw = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.11, 4), new THREE.MeshStandardMaterial({ color: 0xf0e0c0 }));
+    claw.position.set(side * 0.56, -0.48, -0.64);
     claw.rotation.x = Math.PI / 2;
     a.add(upper, pad, claw);
     a.userData.side = side;
     return a;
   }
-  cactusArms.add(arm(-1), arm(1));
-  const brim = new THREE.Mesh(
-    new THREE.TorusGeometry(0.55, 0.06, 6, 20, Math.PI),
-    new THREE.MeshStandardMaterial({ color: 0x3a2212, roughness: 0.9 })
-  );
-  brim.rotation.x = 1.2;
-  brim.position.set(0, 0.34, -0.2);
-  cactusArms.add(brim);
+  const left = arm(-1);
+  const right = arm(1);
+  left.position.set(-0.12, -0.22, 0.08);
+  right.position.set(0.12, -0.22, 0.08);
+  cactusArms.add(left, right);
   camera.add(cactusArms);
 }
 
@@ -542,7 +549,7 @@ AudioBus.prototype.startWind = function () {
 };
 
 function playerObj() {
-  return controls.getObject();
+  return controls.object;
 }
 
 function playerFeet() {
@@ -583,10 +590,10 @@ function spawnChunk(cx, cz) {
 
   const dunes = 4 + Math.floor(rng() * 4);
   for (let i = 0; i < dunes; i++) {
-    const d = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), sandMat);
-    const s = 2.5 + rng() * 5;
-    d.scale.set(s, 0.28 + rng() * 0.25, s * (0.7 + rng() * 0.5));
-    d.position.set(originX + (rng() - 0.5) * CHUNK, 0, originZ + (rng() - 0.5) * CHUNK);
+    const d = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 6), sandMat);
+    const s = 3.2 + rng() * 6;
+    d.scale.set(s, 0.22 + rng() * 0.18, s * (0.65 + rng() * 0.4));
+    d.position.set(originX + (rng() - 0.5) * CHUNK, -0.12, originZ + (rng() - 0.5) * CHUNK);
     d.receiveShadow = true;
     scene.add(d);
     objects.push(d);
@@ -630,25 +637,56 @@ function spawnChunk(cx, cz) {
       const n = 2 + Math.floor(rng() * 3);
       for (let i = 0; i < n; i++) {
         const coin = makeCoin(false);
-        coin.position.set(x + (rng() - 0.5) * 1.6, u.h + 1.1 + i * 0.35, z + (rng() - 0.5) * 1.4);
+        const hy = u.h + 1.1 + i * 0.35;
+        coin.position.set(x + (rng() - 0.5) * 1.6, hy, z + (rng() - 0.5) * 1.4);
+        coin.userData.baseY = hy;
         scene.add(coin);
         objects.push(coin);
       }
     }
   }
 
-  const coinCount = 6 + Math.floor(rng() * 8);
+  const coinCount = isOrigin ? 4 : 7 + Math.floor(rng() * 8);
   for (let i = 0; i < coinCount; i++) {
     const big = rng() > 0.92;
     const coin = makeCoin(big);
     const x = originX + (rng() - 0.5) * (CHUNK - 4);
     const z = originZ + (rng() - 0.5) * (CHUNK - 4);
-    const hover = 0.7 + rng() * 1.8 + (rng() > 0.7 ? 1.6 : 0);
+    const hover = 0.85 + rng() * 1.4 + (rng() > 0.75 ? 1.4 : 0);
     coin.position.set(x, hover, z);
     coin.userData.baseY = hover;
     coin.userData.spin = rng() * 6;
     scene.add(coin);
     objects.push(coin);
+  }
+
+  if (isOrigin) {
+    for (let i = 1; i <= 14; i++) {
+      const coin = makeCoin(i === 10);
+      const hover = i % 4 === 0 ? 2.15 : 1.05;
+      coin.position.set((i % 2 === 0 ? 0.9 : -0.9), hover, -2.4 - i * 2.1);
+      coin.userData.baseY = hover;
+      scene.add(coin);
+      objects.push(coin);
+    }
+    const barrel = makeBarrel(rng);
+    barrel.position.set(2.4, 0, -18);
+    scene.add(barrel);
+    objects.push(barrel);
+    colliders.push({ kind: "barrel", x: 2.4, z: -18, r: 0.6, h: 0.9, mesh: barrel, chunk: key });
+    const jug = makeCanteen();
+    jug.position.set(-1.6, 0.75, -12);
+    jug.userData.baseY = 0.75;
+    scene.add(jug);
+    objects.push(jug);
+    for (const wz of [-8, -24]) {
+      const weed = makeTumbleweed();
+      weed.position.set(-6, 0.7, wz);
+      weed.scale.setScalar(1.4);
+      scene.add(weed);
+      objects.push(weed);
+      tumbleweeds.push({ mesh: weed, vx: 7.5, vz: 0.4, r: 0.75, spin: 1 });
+    }
   }
 
   if (rng() > 0.55) {
@@ -673,7 +711,7 @@ function spawnChunk(cx, cz) {
     objects.push(f);
   }
 
-  const snakes = rng() > 0.45 ? 1 + Math.floor(rng() * 2) : 0;
+  const snakes = isOrigin ? 0 : rng() > 0.45 ? 1 + Math.floor(rng() * 2) : 0;
   for (let i = 0; i < snakes; i++) {
     const s = makeSnake();
     const x = originX + (rng() - 0.5) * (CHUNK - 8);
@@ -699,14 +737,15 @@ function spawnChunk(cx, cz) {
     const w = makeTumbleweed();
     const x = originX + (rng() - 0.5) * CHUNK;
     const z = originZ + (rng() - 0.5) * CHUNK;
-    w.position.set(x, 0.55, z);
+    w.position.set(x, 0.7, z);
+    w.scale.setScalar(1.25 + rng() * 0.35);
     scene.add(w);
     objects.push(w);
     tumbleweeds.push({
       mesh: w,
-      vx: (rng() - 0.35) * 6 + 2.5,
-      vz: (rng() - 0.5) * 5,
-      r: 0.55,
+      vx: (rng() - 0.25) * 7 + 3,
+      vz: (rng() - 0.5) * 6,
+      r: 0.7,
       spin: rng() * 4,
     });
   }
@@ -776,6 +815,7 @@ function updateHud() {
   hearts.innerHTML = "";
   for (let i = 0; i < 3; i++) {
     const el = document.createElement("i");
+    el.textContent = "🌵";
     if (i < lives) el.className = "on";
     hearts.appendChild(el);
   }
@@ -1011,7 +1051,7 @@ function updateWeeds(dt) {
     }
     w.mesh.position.x += w.vx * dt;
     w.mesh.position.z += w.vz * dt;
-    w.mesh.position.y = 0.55 + Math.abs(Math.sin(performance.now() / 400 + w.spin)) * 0.08;
+    w.mesh.position.y = 0.7 + Math.abs(Math.sin(performance.now() / 400 + w.spin)) * 0.1;
     w.mesh.rotation.x += w.vx * dt * 0.8;
     w.mesh.rotation.z += w.vz * dt * 0.8;
     const dx = p.x - w.mesh.position.x;
