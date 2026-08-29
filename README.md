@@ -1,25 +1,25 @@
 # Saguaro Leap
 
-An Arizona canyon hopper. You are a jumping saguaro in a cowboy hat, leaping ledges along the South Rim while the Grand Canyon drops away beneath you.
+**[Play Saguaro Leap](https://raw.githack.com/radhuparthi1/Arizona-Game/cursor/saguaro-leap-canyon-game-0224/index.html)**
 
-Play it by opening `index.html` in a browser, or from this folder:
+GitHub only shows the source files. It does not run the game. Open the link above in a browser, then press **Leap onto the rim** or Space.
 
-```bash
-python3 -m http.server 8080
-```
+You are a jumping saguaro in a cowboy hat, leaping ledges along the South Rim while the Grand Canyon drops away beneath you.
 
-Then visit [http://localhost:8080](http://localhost:8080).
-
-## How to play
+## Controls
 
 - **Jump:** Space, W, up arrow, or tap / click. Hold for a higher leap.
 - **Pause:** P or Escape
 - **Mute:** M, or the note button
 
-Clear rattlesnakes, rolling tumbleweeds, and canyon hawks. Grab turquoise, gold, and cactus flowers. Fall into the gorge or tag a hazard and the trail ends.
+Clear rattlesnakes, rolling tumbleweeds, and canyon hawks. Grab turquoise, gold, and cactus flowers.
 
-Your best score is saved in the browser.
+## Play on your computer
 
-## Theme
+Download or clone this branch, then open `index.html` in Chrome, Safari, or Firefox. Or serve the folder:
 
-Sunset sky, layered red-rock walls, a glimpse of the Colorado River in the gaps, mesa silhouettes, and a saguaro with a turquoise hatband.
+```bash
+python3 -m http.server 8080
+```
+
+Then visit http://localhost:8080.
