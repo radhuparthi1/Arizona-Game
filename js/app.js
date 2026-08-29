@@ -391,16 +391,21 @@
     const idx = mondayIndex();
     const now = new Date();
     const mins = now.getHours() * 60 + now.getMinutes();
-    const upcoming = state.events
-      .filter((e) => e.day === idx)
-      .sort((a, b) => a.start.localeCompare(b.start))
-      .filter((e) => toMinutes(e.end) >= mins)
-      .slice(0, 4);
+    const byDay = (day) =>
+      state.events
+        .filter((e) => e.day === day)
+        .sort((a, b) => a.start.localeCompare(b.start));
+    let upcoming = byDay(idx).filter((e) => toMinutes(e.end) >= mins).slice(0, 4);
+    let when = "";
+    if (!upcoming.length) {
+      upcoming = byDay((idx + 1) % 7).slice(0, 4);
+      when = "Tomorrow · ";
+    }
     $("today-agenda").innerHTML = upcoming.length
       ? upcoming
           .map(
             (e) =>
-              `<li><div><b>${e.title}</b><div class="hint" style="margin:0">${formatTime(e.start)} – ${formatTime(e.end)} · ${e.type}</div></div></li>`
+              `<li><div><b>${e.title}</b><div class="hint" style="margin:0">${when}${formatTime(e.start)} – ${formatTime(e.end)} · ${e.type}</div></div></li>`
           )
           .join("")
       : `<li>Nothing left on the grid tonight. Rest counts.</li>`;

@@ -606,6 +606,12 @@ h2 {
   margin: 14px 0;
 }
 
+.timer-actions .primary-btn,
+.timer-actions .ghost-btn {
+  white-space: nowrap;
+  min-width: 8.5rem;
+}
+
 .method-pick,
 .slider-row {
   display: grid;
