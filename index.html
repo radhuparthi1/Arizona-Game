@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#1a0b08" />
+    <title>Saguaro Leap — Grand Canyon</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Rye&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="sunburst" aria-hidden="true"></div>
+      <main class="stage">
+        <canvas id="game" width="1280" height="720" aria-label="Saguaro Leap game"></canvas>
+
+        <div class="ui" id="ui">
+          <div class="hud" id="hud" hidden>
+            <div class="hud-cluster">
+              <div class="stat">
+                <em>Score</em>
+                <strong id="score">0</strong>
+              </div>
+              <div class="stat">
+                <em>Along the rim</em>
+                <strong id="distance">0 yd</strong>
+              </div>
+              <div class="stat gem">
+                <em>Turquoise</em>
+                <strong id="gems">0</strong>
+              </div>
+            </div>
+            <div class="hud-cluster">
+              <div class="stat">
+                <em>Best</em>
+                <strong id="best">0</strong>
+              </div>
+              <button class="icon-btn" id="pauseBtn" type="button" aria-label="Pause">II</button>
+              <button class="icon-btn" id="muteBtn" type="button" aria-label="Mute">♪</button>
+            </div>
+          </div>
+
+          <section class="panel" id="titleScreen">
+            <p class="eyebrow">Arizona · Grand Canyon</p>
+            <h1>Saguaro Leap</h1>
+            <p class="tagline">Hop the South Rim as a jumping cactus. Watch the drop.</p>
+            <ul class="how">
+              <li><kbd>Space</kbd> / tap — jump · hold for a bigger leap</li>
+              <li>Clear rattlesnakes, tumbleweeds, and hawks</li>
+              <li>Grab turquoise and gold along the canyon</li>
+            </ul>
+            <button class="cta" id="playBtn" type="button">Leap onto the rim</button>
+            <p class="hint">Press Space or tap anywhere to start</p>
+          </section>
+
+          <section class="panel compact" id="pauseScreen" hidden>
+            <h2>Holding the rim</h2>
+            <p>The canyon is not going anywhere.</p>
+            <button class="cta" id="resumeBtn" type="button">Keep leaping</button>
+          </section>
+
+          <section class="panel" id="overScreen" hidden>
+            <p class="eyebrow" id="overCause">You fell into the canyon</p>
+            <h2>End of the trail</h2>
+            <div class="results">
+              <div class="stat">
+                <em>Score</em>
+                <strong id="overScore">0</strong>
+              </div>
+              <div class="stat">
+                <em>Distance</em>
+                <strong id="overDistance">0 yd</strong>
+              </div>
+              <div class="stat gem">
+                <em>Turquoise</em>
+                <strong id="overGems">0</strong>
+              </div>
+            </div>
+            <p class="record" id="newRecord" hidden>New high score — legend of the rim!</p>
+            <button class="cta" id="retryBtn" type="button">Jump again</button>
+          </section>
+        </div>
+      </main>
+      <p class="credit">South Rim sunset · saguaro · turquoise · Colorado River far below</p>
+    </div>
+    <script src="js/game.js"></script>
+  </body>
+</html>
