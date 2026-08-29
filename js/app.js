@@ -1,4 +1,7 @@
 (() => {
+  if (window.__DAYMARK__) return;
+  window.__DAYMARK__ = true;
+
   const STORAGE_KEY = "daymark-v1";
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const MOODS = [
@@ -266,6 +269,7 @@
     running: false,
     phase: "focus",
     handle: null,
+    endsAt: 0,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -579,41 +583,71 @@
     render();
   }
 
+  function phaseSeconds() {
+    return PRESETS[timer.preset][timer.phase === "break" ? "break" : "focus"];
+  }
+
+  function paintTimer() {
+    const face = $("timer-display");
+    if (!face) return;
+    face.textContent = mmss(timer.remaining);
+    $("timer-mode-label").textContent =
+      timer.phase === "break" ? "Break — stand up, look away" : PRESETS[timer.preset].label;
+    $("timer-toggle").textContent = timer.running
+      ? "Pause"
+      : timer.phase === "break"
+        ? "Start break"
+        : "Start focus";
+  }
+
+  function completePhase() {
+    const minutes = Math.round(phaseSeconds() / 60);
+    if (timer.phase === "focus") {
+      const day = dayState();
+      day.studyMinutes += minutes;
+      day.sessions.push({
+        minutes,
+        method: $("session-method").value,
+        phase: "focus",
+        at: Date.now(),
+      });
+      save();
+      toast(`Focus complete. ${minutes} minutes logged. Take the break.`);
+      timer.phase = "break";
+    } else {
+      toast("Break over. When you are ready, start the next focus.");
+      timer.phase = "focus";
+    }
+    timer.remaining = phaseSeconds();
+    render();
+  }
+
   function tick() {
     if (!timer.running) return;
-    timer.remaining -= 1;
+    timer.remaining = Math.max(0, Math.ceil((timer.endsAt - Date.now()) / 1000));
     if (timer.remaining <= 0) {
       timer.running = false;
       clearInterval(timer.handle);
-      const minutes = Math.round(PRESETS[timer.preset][timer.phase === "break" ? "break" : "focus"] / 60);
-      if (timer.phase === "focus") {
-        const day = dayState();
-        day.studyMinutes += minutes;
-        day.sessions.push({
-          minutes,
-          method: $("session-method").value,
-          phase: "focus",
-          at: Date.now(),
-        });
-        save();
-        toast(`Focus complete. ${minutes} minutes logged. Take the break.`);
-        timer.phase = "break";
-        timer.remaining = PRESETS[timer.preset].break;
-      } else {
-        toast("Break over. When you are ready, start the next focus.");
-        timer.phase = "focus";
-        timer.remaining = PRESETS[timer.preset].focus;
-      }
+      timer.handle = null;
+      completePhase();
+      return;
     }
-    if (view === "study") {
-      $("timer-display").textContent = mmss(timer.remaining);
-      $("timer-toggle").textContent = timer.running
-        ? "Pause"
-        : timer.phase === "break"
-          ? "Start break"
-          : "Start focus";
+    paintTimer();
+  }
+
+  function toggleTimer() {
+    if (timer.running) {
+      timer.remaining = Math.max(0, Math.ceil((timer.endsAt - Date.now()) / 1000));
+      timer.running = false;
+      clearInterval(timer.handle);
+      timer.handle = null;
+    } else {
+      timer.running = true;
+      timer.endsAt = Date.now() + timer.remaining * 1000;
+      clearInterval(timer.handle);
+      timer.handle = setInterval(tick, 250);
     }
-    if (!timer.running) render();
+    paintTimer();
   }
 
   document.addEventListener("click", (e) => {
@@ -649,6 +683,7 @@
       timer.phase = "focus";
       timer.remaining = PRESETS[timer.preset].focus;
       clearInterval(timer.handle);
+      timer.handle = null;
       render();
       return;
     }
@@ -702,14 +737,7 @@
   });
 
   $("timer-toggle").addEventListener("click", () => {
-    timer.running = !timer.running;
-    if (timer.running) {
-      clearInterval(timer.handle);
-      timer.handle = setInterval(tick, 1000);
-    } else {
-      clearInterval(timer.handle);
-    }
-    render();
+    toggleTimer();
   });
 
   $("timer-reset").addEventListener("click", () => {
@@ -717,6 +745,7 @@
     timer.phase = "focus";
     timer.remaining = PRESETS[timer.preset].focus;
     clearInterval(timer.handle);
+    timer.handle = null;
     render();
   });
 
