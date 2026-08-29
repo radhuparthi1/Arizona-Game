@@ -1,20 +1,30 @@
 # Daymark
 
-A calm student companion for **routine**, **schedule**, **study methods**, and a **healthier campus life**. Everything is saved in your browser — no account required.
+A calm student companion for **routine**, **schedule**, **study methods**, and a **healthier campus life**. Saved in your browser — no account.
 
-The whole app is a single file: **`index.html`**. Double-click it, or drag it into Chrome / Safari / Edge. You do not need to install anything.
+The whole app is one file: **`index.html`**. Double-click it after you download the branch.
 
-## Open the live site
+## Why GitHub looks “broken”
 
-This repo’s GitHub Pages URL is not turned on yet, so `https://radhuparthi1.github.io/Arizona-Game/` will 404. Use this link instead (serves this branch as a real webpage):
+- **`https://radhuparthi1.github.io/Arizona-Game/`** is a 404. GitHub Pages is not turned on for this repo, so that URL cannot show the site.
+- Clicking `index.html` **on GitHub** only shows source code. That is GitHub’s file viewer, not a website.
+- The **main** branch still only has the old README. The site lives on branch `cursor/student-wellness-daymark-f99c`.
 
-**https://cdn.jsdelivr.net/gh/radhuparthi1/Arizona-Game@cursor/student-wellness-daymark-f99c/index.html**
+## Open the site in your browser
 
-Or preview from GitHub:
+Use this preview (it renders the HTML as a real page):
 
 **https://htmlpreview.github.io/?https://github.com/radhuparthi1/Arizona-Game/blob/cursor/student-wellness-daymark-f99c/index.html**
 
-Clicking `index.html` on GitHub itself only shows source code. That is GitHub’s file viewer, not the app.
+Or clone the branch and open the file:
+
+```bash
+git clone -b cursor/student-wellness-daymark-f99c https://github.com/radhuparthi1/Arizona-Game.git
+```
+
+Then open `Arizona-Game/index.html` in Chrome, Safari, or Edge.
+
+To publish `https://radhuparthi1.github.io/Arizona-Game/` yourself: GitHub → this repo → Settings → Pages → Deploy from branch → `gh-pages` → `/ (root)` → Save.
 
 ## What it helps with
 
