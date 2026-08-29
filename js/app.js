@@ -1,8 +1,9 @@
 (() => {
-  if (window.__DAYMARK__) return;
-  window.__DAYMARK__ = true;
+  if (window.__MYSTUDYLIFE__) return;
+  window.__MYSTUDYLIFE__ = true;
 
-  const STORAGE_KEY = "daymark-v1";
+  const STORAGE_KEY = "mystudylife-v1";
+  const LEGACY_KEY = "daymark-v1";
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const MOODS = [
     { id: "low", label: "Heavy" },
@@ -11,11 +12,11 @@
     { id: "bright", label: "Bright" },
   ];
   const QUOTES = [
-    { text: "Protect the first hour. The rest of the day will try to steal it.", by: "Daymark" },
-    { text: "You do not need a perfect routine. You need a repeatable one.", by: "Daymark" },
-    { text: "Study is a conversation with the idea, not a stare at the page.", by: "Daymark" },
-    { text: "Sleep is not a reward for finishing. It is how finishing becomes possible.", by: "Daymark" },
-    { text: "A short walk is often the missing paragraph.", by: "Daymark" },
+    { text: "Protect the first hour. The rest of the day will try to steal it.", by: "MyStudyLife" },
+    { text: "You do not need a perfect routine. You need a repeatable one.", by: "MyStudyLife" },
+    { text: "Study is a conversation with the idea, not a stare at the page.", by: "MyStudyLife" },
+    { text: "Sleep is not a reward for finishing. It is how finishing becomes possible.", by: "MyStudyLife" },
+    { text: "A short walk is often the missing paragraph.", by: "MyStudyLife" },
   ];
   const METHODS = [
     {
@@ -150,7 +151,7 @@
     },
     {
       title: "Stress has a body",
-      body: "If your chest is tight and the page will not go in, name the mood in Daymark, stand up, and breathe out longer than you breathe in for one minute. Then return to a smaller slice of the task.",
+      body: "If your chest is tight and the page will not go in, name the mood in MyStudyLife, stand up, and breathe out longer than you breathe in for one minute. Then return to a smaller slice of the task.",
     },
   ];
 
@@ -236,7 +237,7 @@
 
   function load() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.habits && parsed.events && parsed.days) return parsed;
@@ -353,7 +354,7 @@
 
   function renderGlance() {
     const parts = scoreParts(dayState());
-    $("rail-glance").innerHTML = `<strong>${parts.value} / 100</strong>Today’s Daymark score. Keep a few promises and the number follows.`;
+    $("rail-glance").innerHTML = `<strong>${parts.value} / 100</strong>Today’s MyStudyLife score. Keep a few promises and the number follows.`;
   }
 
   function renderToday() {
@@ -771,7 +772,7 @@
   $("move-range").addEventListener("change", () => render());
 
   $("reset-demo").addEventListener("click", () => {
-    if (!confirm("Replace your saved Daymark data with a fresh starter week?")) return;
+    if (!confirm("Replace your saved MyStudyLife data with a fresh starter week?")) return;
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   });

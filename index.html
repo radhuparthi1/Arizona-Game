@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Daymark helps students build a better routine, keep a calmer schedule, study with proven methods, and live a healthier campus life."
+      content="MyStudyLife helps students build a better routine, keep a calmer schedule, study with proven methods, and live a healthier campus life."
     />
-    <title>Daymark — A calmer student life</title>
+    <title>MyStudyLife — A calmer student life</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -117,7 +117,7 @@ body::before {
 .brand strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.12rem;
   letter-spacing: -0.03em;
 }
 
@@ -878,7 +878,7 @@ input[type="range"] {
             </svg>
           </span>
           <div>
-            <strong>Daymark</strong>
+            <strong>MyStudyLife</strong>
             <span>Student companion</span>
           </div>
         </div>
@@ -925,7 +925,7 @@ input[type="range"] {
           <section class="view is-active" id="view-today" data-view="today" aria-labelledby="page-title">
             <div class="hero-grid">
               <article class="score-card">
-                <p class="kicker">Daymark score</p>
+                <p class="kicker">MyStudyLife score</p>
                 <div class="score-row">
                   <div class="ring" id="score-ring" aria-hidden="true">
                     <svg viewBox="0 0 120 120">
@@ -1116,14 +1116,15 @@ input[type="range"] {
 
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
     <noscript>
-      <p class="noscript">Daymark needs JavaScript to save your routine, schedule, and wellness marks in this browser.</p>
+      <p class="noscript">MyStudyLife needs JavaScript to save your routine, schedule, and wellness marks in this browser.</p>
     </noscript>
     <script>
 (() => {
-  if (window.__DAYMARK__) return;
-  window.__DAYMARK__ = true;
+  if (window.__MYSTUDYLIFE__) return;
+  window.__MYSTUDYLIFE__ = true;
 
-  const STORAGE_KEY = "daymark-v1";
+  const STORAGE_KEY = "mystudylife-v1";
+  const LEGACY_KEY = "daymark-v1";
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const MOODS = [
     { id: "low", label: "Heavy" },
@@ -1132,11 +1133,11 @@ input[type="range"] {
     { id: "bright", label: "Bright" },
   ];
   const QUOTES = [
-    { text: "Protect the first hour. The rest of the day will try to steal it.", by: "Daymark" },
-    { text: "You do not need a perfect routine. You need a repeatable one.", by: "Daymark" },
-    { text: "Study is a conversation with the idea, not a stare at the page.", by: "Daymark" },
-    { text: "Sleep is not a reward for finishing. It is how finishing becomes possible.", by: "Daymark" },
-    { text: "A short walk is often the missing paragraph.", by: "Daymark" },
+    { text: "Protect the first hour. The rest of the day will try to steal it.", by: "MyStudyLife" },
+    { text: "You do not need a perfect routine. You need a repeatable one.", by: "MyStudyLife" },
+    { text: "Study is a conversation with the idea, not a stare at the page.", by: "MyStudyLife" },
+    { text: "Sleep is not a reward for finishing. It is how finishing becomes possible.", by: "MyStudyLife" },
+    { text: "A short walk is often the missing paragraph.", by: "MyStudyLife" },
   ];
   const METHODS = [
     {
@@ -1271,7 +1272,7 @@ input[type="range"] {
     },
     {
       title: "Stress has a body",
-      body: "If your chest is tight and the page will not go in, name the mood in Daymark, stand up, and breathe out longer than you breathe in for one minute. Then return to a smaller slice of the task.",
+      body: "If your chest is tight and the page will not go in, name the mood in MyStudyLife, stand up, and breathe out longer than you breathe in for one minute. Then return to a smaller slice of the task.",
     },
   ];
 
@@ -1357,7 +1358,7 @@ input[type="range"] {
 
   function load() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.habits && parsed.events && parsed.days) return parsed;
@@ -1474,7 +1475,7 @@ input[type="range"] {
 
   function renderGlance() {
     const parts = scoreParts(dayState());
-    $("rail-glance").innerHTML = `<strong>${parts.value} / 100</strong>Today’s Daymark score. Keep a few promises and the number follows.`;
+    $("rail-glance").innerHTML = `<strong>${parts.value} / 100</strong>Today’s MyStudyLife score. Keep a few promises and the number follows.`;
   }
 
   function renderToday() {
@@ -1892,7 +1893,7 @@ input[type="range"] {
   $("move-range").addEventListener("change", () => render());
 
   $("reset-demo").addEventListener("click", () => {
-    if (!confirm("Replace your saved Daymark data with a fresh starter week?")) return;
+    if (!confirm("Replace your saved MyStudyLife data with a fresh starter week?")) return;
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   });

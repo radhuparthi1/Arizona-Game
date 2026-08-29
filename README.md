@@ -1,4 +1,4 @@
-# Daymark
+# MyStudyLife
 
 A calm student companion for **routine**, **schedule**, **study methods**, and a **healthier campus life**. Saved in your browser — no account.
 
@@ -28,7 +28,7 @@ To publish `https://radhuparthi1.github.io/Arizona-Game/` yourself: GitHub → t
 
 ## What it helps with
 
-- **Today** — a Daymark score from habits, sleep, water, movement, and study minutes
+- **Today** — a MyStudyLife score from habits, sleep, water, movement, and study minutes
 - **Routine** — morning, focus-hour, and evening marks, plus a 14-day heatmap
 - **Schedule** — a Monday–Sunday grid for classes, study blocks, wellness, and life
 - **Study** — a Pomodoro-style timer and methods such as active recall, spaced repetition, and Feynman
