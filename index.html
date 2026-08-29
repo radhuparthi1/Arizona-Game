@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Daymark helps students build a better routine, keep a calmer schedule, study with proven methods, and live a healthier campus life."
+    />
+    <title>Daymark — A calmer student life</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e4d3a'/%3E%3Cpath d='M8 22h16M10 22V10l6 3 6-3v12' fill='none' stroke='%23f6f1e8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='8' r='2' fill='%23e8b86d'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="app">
+      <aside class="rail" aria-label="Primary">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="32" height="32">
+              <rect width="32" height="32" rx="8" fill="currentColor" />
+              <path
+                d="M8 22h16M10 22V10l6 3 6-3v12"
+                fill="none"
+                stroke="#f6f1e8"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <circle cx="16" cy="8" r="2" fill="#e8b86d" />
+            </svg>
+          </span>
+          <div>
+            <strong>Daymark</strong>
+            <span>Student companion</span>
+          </div>
+        </div>
+        <nav class="nav" aria-label="Sections">
+          <button class="nav-btn is-active" data-nav="today" type="button">
+            <span class="nav-ico" aria-hidden="true">◉</span>
+            Today
+          </button>
+          <button class="nav-btn" data-nav="routine" type="button">
+            <span class="nav-ico" aria-hidden="true">↻</span>
+            Routine
+          </button>
+          <button class="nav-btn" data-nav="schedule" type="button">
+            <span class="nav-ico" aria-hidden="true">▦</span>
+            Schedule
+          </button>
+          <button class="nav-btn" data-nav="study" type="button">
+            <span class="nav-ico" aria-hidden="true">✎</span>
+            Study
+          </button>
+          <button class="nav-btn" data-nav="lifestyle" type="button">
+            <span class="nav-ico" aria-hidden="true">☀</span>
+            Lifestyle
+          </button>
+        </nav>
+        <div class="rail-card" id="rail-glance"></div>
+      </aside>
+
+      <div class="stage">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="greeting">Good day</p>
+            <h1 id="page-title">Today</h1>
+          </div>
+          <div class="topbar-meta">
+            <time id="today-date"></time>
+            <button class="ghost-btn" id="reset-demo" type="button" title="Reset local data to a fresh starter week">
+              Reset starter data
+            </button>
+          </div>
+        </header>
+
+        <main id="main">
+          <section class="view is-active" id="view-today" data-view="today" aria-labelledby="page-title">
+            <div class="hero-grid">
+              <article class="score-card">
+                <p class="kicker">Daymark score</p>
+                <div class="score-row">
+                  <div class="ring" id="score-ring" aria-hidden="true">
+                    <svg viewBox="0 0 120 120">
+                      <circle class="ring-track" cx="60" cy="60" r="50" />
+                      <circle class="ring-value" id="score-arc" cx="60" cy="60" r="50" />
+                    </svg>
+                    <strong id="score-value">0</strong>
+                  </div>
+                  <div>
+                    <h2 id="score-label">A quiet start</h2>
+                    <p id="score-copy">Check a habit, drink some water, or begin a focus block. Small marks add up.</p>
+                    <ul class="score-breakdown" id="score-breakdown"></ul>
+                  </div>
+                </div>
+              </article>
+              <article class="quote-card" id="quote-card"></article>
+            </div>
+            <div class="stat-grid" id="stat-grid"></div>
+            <div class="split">
+              <article class="panel">
+                <header class="panel-head">
+                  <h2>Today’s marks</h2>
+                  <button class="text-btn" data-nav="routine" type="button">Open routine</button>
+                </header>
+                <ul class="habit-list compact" id="today-habits"></ul>
+              </article>
+              <article class="panel">
+                <header class="panel-head">
+                  <h2>Coming up</h2>
+                  <button class="text-btn" data-nav="schedule" type="button">Open schedule</button>
+                </header>
+                <ul class="agenda" id="today-agenda"></ul>
+              </article>
+            </div>
+          </section>
+
+          <section class="view" id="view-routine" data-view="routine" hidden>
+            <p class="lede">
+              A routine is not a prison. It is a handful of promises you keep at the same time each day so studying
+              and rest do not have to fight for leftovers.
+            </p>
+            <form class="add-bar" id="habit-form">
+              <label class="sr-only" for="habit-name">New habit</label>
+              <input id="habit-name" name="name" maxlength="48" placeholder="Add a mark — e.g. Review flashcards" required />
+              <label class="sr-only" for="habit-period">Time of day</label>
+              <select id="habit-period" name="period">
+                <option value="morning">Morning</option>
+                <option value="focus">Focus hours</option>
+                <option value="evening">Evening</option>
+              </select>
+              <button class="primary-btn" type="submit">Add to routine</button>
+            </form>
+            <div class="period-grid" id="routine-board"></div>
+            <article class="panel">
+              <header class="panel-head">
+                <h2>Last 14 days</h2>
+                <p class="hint" id="streak-hint"></p>
+              </header>
+              <div class="heat" id="habit-heat" aria-label="Habit completion over the last two weeks"></div>
+            </article>
+          </section>
+
+          <section class="view" id="view-schedule" data-view="schedule" hidden>
+            <p class="lede">
+              Protect the hours that matter. Classes, deep study, meals, and sleep all get a place on the week so
+              nothing important is left to chance.
+            </p>
+            <form class="add-bar wrap" id="event-form">
+              <label class="sr-only" for="event-title">Event title</label>
+              <input id="event-title" name="title" maxlength="60" placeholder="Class, lab, or study block" required />
+              <label class="sr-only" for="event-day">Day</label>
+              <select id="event-day" name="day"></select>
+              <label class="sr-only" for="event-start">Start</label>
+              <input id="event-start" name="start" type="time" value="09:00" required />
+              <label class="sr-only" for="event-end">End</label>
+              <input id="event-end" name="end" type="time" value="10:15" required />
+              <label class="sr-only" for="event-type">Type</label>
+              <select id="event-type" name="type">
+                <option value="class">Class</option>
+                <option value="study">Study</option>
+                <option value="wellness">Wellness</option>
+                <option value="life">Life</option>
+              </select>
+              <button class="primary-btn" type="submit">Place on week</button>
+            </form>
+            <div class="week" id="week-board"></div>
+          </section>
+
+          <section class="view" id="view-study" data-view="study" hidden>
+            <p class="lede">
+              Studying harder is not the same as studying well. Pick a method, set a timer, and give one idea your
+              full attention.
+            </p>
+            <div class="split study-split">
+              <article class="panel timer-panel">
+                <header class="panel-head">
+                  <h2>Focus timer</h2>
+                  <p class="hint" id="timer-mode-label">25 minutes of deep work</p>
+                </header>
+                <div class="timer-face" aria-live="polite">
+                  <span id="timer-display">25:00</span>
+                </div>
+                <div class="preset-row" role="group" aria-label="Timer presets">
+                  <button class="chip is-active" data-preset="25-5" type="button">Pomodoro 25 / 5</button>
+                  <button class="chip" data-preset="50-10" type="button">50 / 10</button>
+                  <button class="chip" data-preset="15-3" type="button">Sprint 15 / 3</button>
+                </div>
+                <div class="timer-actions">
+                  <button class="primary-btn" id="timer-toggle" type="button">Start focus</button>
+                  <button class="ghost-btn" id="timer-reset" type="button">Reset</button>
+                </div>
+                <label class="method-pick">
+                  <span>This session’s method</span>
+                  <select id="session-method"></select>
+                </label>
+                <ol class="session-log" id="session-log"></ol>
+              </article>
+              <div>
+                <div class="method-toolbar">
+                  <h2>Methods that actually work</h2>
+                  <label class="sr-only" for="method-filter">Filter methods</label>
+                  <select id="method-filter">
+                    <option value="all">All methods</option>
+                    <option value="memory">Memory</option>
+                    <option value="understanding">Understanding</option>
+                    <option value="notes">Notes</option>
+                    <option value="time">Time &amp; focus</option>
+                  </select>
+                </div>
+                <div class="method-grid" id="method-grid"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="view-lifestyle" data-view="lifestyle" hidden>
+            <p class="lede">
+              A healthy student life is sleep, water, movement, and mood — treated as part of the academic plan,
+              not as extras you earn after the work is done.
+            </p>
+            <div class="life-grid">
+              <article class="panel">
+                <h2>Sleep last night</h2>
+                <p class="hint">Most students need 7–9 hours. Less than that quietly steals tomorrow’s focus.</p>
+                <div class="slider-row">
+                  <input id="sleep-range" type="range" min="4" max="11" step="0.5" />
+                  <strong id="sleep-label">8 h</strong>
+                </div>
+              </article>
+              <article class="panel">
+                <h2>Water today</h2>
+                <p class="hint">Aim for eight glasses. Tap a glass to fill it.</p>
+                <div class="glasses" id="water-glasses" role="group" aria-label="Water glasses"></div>
+              </article>
+              <article class="panel">
+                <h2>Mood check-in</h2>
+                <p class="hint">Name it, then keep going. You do not have to feel great to study well.</p>
+                <div class="moods" id="mood-row" role="group" aria-label="Mood"></div>
+              </article>
+              <article class="panel">
+                <h2>Move a little</h2>
+                <p class="hint">Minutes of walking, stretching, or sport. Twenty to thirty is a solid student day.</p>
+                <div class="slider-row">
+                  <input id="move-range" type="range" min="0" max="90" step="5" />
+                  <strong id="move-label">0 min</strong>
+                </div>
+              </article>
+            </div>
+            <article class="panel">
+              <header class="panel-head">
+                <h2>This week’s body of work</h2>
+                <p class="hint">Sleep, water, movement, and study minutes across the last seven days.</p>
+              </header>
+              <div class="bars" id="week-bars"></div>
+            </article>
+            <div class="tips" id="life-tips"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <nav class="dock" aria-label="Mobile">
+      <button class="dock-btn is-active" data-nav="today" type="button">Today</button>
+      <button class="dock-btn" data-nav="routine" type="button">Routine</button>
+      <button class="dock-btn" data-nav="schedule" type="button">Schedule</button>
+      <button class="dock-btn" data-nav="study" type="button">Study</button>
+      <button class="dock-btn" data-nav="lifestyle" type="button">Life</button>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <noscript>
+      <p class="noscript">Daymark needs JavaScript to save your routine, schedule, and wellness marks in this browser.</p>
+    </noscript>
+    <script src="js/app.js"></script>
+  </body>
+</html>
