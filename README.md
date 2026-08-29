@@ -14,7 +14,7 @@ The whole app is one file: **`index.html`**. Double-click it after you download 
 
 Use this preview (it renders the HTML as a real page):
 
-**https://htmlpreview.github.io/?https://github.com/radhuparthi1/Arizona-Game/blob/cursor/student-wellness-daymark-f99c/index.html**
+**https://htmlpreview.github.io/?https://github.com/radhuparthi1/Arizona-Game/blob/17122f7/index.html**
 
 Or clone the branch and open the file:
 
